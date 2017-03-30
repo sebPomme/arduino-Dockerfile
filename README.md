@@ -4,6 +4,14 @@
 
 A Dockerfile for containerising Arduino sketches, and uploading them into your Arduino Boards. [Instructions on how to deploy a docker container to your Arduino board can be found here](http://reprage.com/post/how-to-deploy-docker-containers-to-an-arduino/).
 
+A Vagrantfile configuration has been added, as well as a customized docker host configuration. Vagrant will error the first time it provisions its docker host. This is a workaround for the path.
+
+Be sure to update the -m flag to ino for your board.
+
+vagrant docker-run default -- ino upload -m boardId
+
+Will compile and upload your sketch if everything is working.
+
 ## License
 
 Copyright 2015, Clinton Freeman

@@ -1,0 +1,32 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provision "docker"
+
+  # Share FTDI UARTs for programing
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--usb", "on"]
+    vb.customize ["modifyvm", :id, "--usbehci", "off"]
+    vb.customize ["usbfilter", "add", "0", 
+      "--target", :id, 
+      "--name", "FTDI",
+      "--manufacturer", "FTDI",
+      "--product", "FT232R USB UART"]
+  end
+ 
+  # The following line terminates all ssh connections. Therefore
+  # Vagrant will be forced to reconnect.
+  # That's a workaround to have the docker command in the PATH
+  config.vm.provision "shell", inline:
+    "ps aux | grep 'sshd:' | awk '{print $2}' | xargs kill"
+ 
+  config.vm.define "dockerhost"
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.network "forwarded_port",
+    guest: 8080, host: 7780
+ 
+  config.vm.provider :virtualbox do |vb|
+      vb.name = "dockerhost"
+  end
+end
